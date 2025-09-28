@@ -1,7 +1,7 @@
 <?php
 $url			= $_SERVER['HTTP_HOST'];
 $active_group	= ENVIRONMENT == 'production' ? 'default' : 'development';
-$query_builder = TRUE;
+$query_builder	= TRUE;
 
 $db['development'] = array(
 	'dsn'	=> '',

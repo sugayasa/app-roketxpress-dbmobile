@@ -106,7 +106,7 @@ $route['dayOff/driver/dayOffCalendar']['POST']						= 'DayOff/Driver/dayOffCalen
 $route['dayOff/driver/dayOffDetail']['POST']						= 'DayOff/Driver/dayOffDetail';
 $route['dayOff/driver/submitDayOffRequest']['POST']					= 'DayOff/Driver/submitDayOffRequest';
 $route['dayOff/driver/dayOffRequestList']['POST']					= 'DayOff/Driver/dayOffRequestList';
-$route['dayOff/driver/submitDayOff']['POST']						= 'DayOff/Driver/submitDayOff';
+$route['dayOff/driver/submitDayOff']['POST']						= 'DayOff/Driver/submitDayOffRequest';
 $route['dayOff/driver/submitAvailable']['POST']						= 'DayOff/Driver/submitAvailable';
 
 $route['contactCenter/contactList']['POST']							= 'ContactCenter/contactList';
