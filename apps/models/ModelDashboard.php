@@ -46,6 +46,22 @@ class ModelDashboard extends CI_Model {
 		return 0;
 	}
 
+	public function getTotalActiveOrderDropOffPickupCar($idPartnerType, $idPartner){
+		if($idPartnerType == 1) return 0;
+		$query	=	$this->db->query(
+						"SELECT COUNT(A.IDSCHEDULECARDROPOFFPICKUP) AS TOTALACTIVEORDER
+						FROM t_schedulecardropoffpickup A
+						LEFT JOIN m_statusprocesscardropoffpickup B ON A.IDSTATUSPROCESSCARDROPOFFPICKUP = B.IDSTATUSPROCESSCARDROPOFFPICKUP
+						WHERE A.IDDRIVER = ".$idPartner." AND A.STATUS = 1 AND (B.ISFINISHED = 0 OR A.STATUS IN (1,2))
+						GROUP BY A.IDDRIVER
+						ORDER BY A.IDDRIVER DESC, B.RESERVATIONTIMESTART"
+					);
+		$row	=	$query->row_array();
+
+		if(isset($row)) return $row['TOTALACTIVEORDER'];		
+		return 0;
+	}
+
 	public function getDataActiveOrder($idPartnerType, $idPartner){
 		$table		=	$idPartnerType == "1" ? "t_schedulevendor" : "t_scheduledriver";
 		$fieldOrder	=	$idPartnerType == "1" ? "C.IDSCHEDULEVENDOR" : "C.IDSCHEDULEDRIVER";

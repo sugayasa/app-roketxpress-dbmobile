@@ -53,6 +53,7 @@ class Dashboard extends CI_controller {
 		$totalFee					=	$detailFee['TOTALFEE'];		
 		$dateStr					=	date('F Y');
 		$totalActiveOrder			=	$this->ModelDashboard->getTotalActiveOrder($this->idPartnerType, $this->idPartner);
+		$totalOrderDropOffPickUpCar	=	$this->ModelDashboard->getTotalActiveOrderDropOffPickupCar($this->idPartnerType, $this->idPartner);
 		$dateRangeOrder				=	$this->ModelDashboard->getDateRangeOrder($this->idPartnerType, $this->idPartner);
 		$dataSecretPIN				=	$this->ModelDashboard->getSecretPINStatus($this->idPartnerType, $this->idPartner);
 		$dataDepositBalance			=	$this->ModelDashboard->getDataDepositBalanceVendor($this->idPartner);
@@ -85,6 +86,7 @@ class Dashboard extends CI_controller {
 					"totalFee"						=>	$totalFee,
 					"dateStr"						=>	$dateStr,
 					"totalActiveOrder"				=>	$totalActiveOrder,
+					"totalOrderDropOffPickUpCar"	=>	$totalOrderDropOffPickUpCar,
 					"dateOrderStart"				=>	$dateRangeOrder['DATEORDERSTART'],
 					"dateOrderEnd"					=>	$dateRangeOrder['DATEORDEREND'],
 					"dataCollectPayment"			=>	$dataCollectPayment,

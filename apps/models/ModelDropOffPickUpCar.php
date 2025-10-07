@@ -35,9 +35,9 @@ class ModelDropOffPickUpCar extends CI_Model {
                                 D.RESERVATIONTITLE, A.JOBTYPE, IF(A.JOBTYPE = 1, 'Drop Off', 'Pick Up') AS JOBTYPESTR, 
                                 IF(A.JOBTYPE = 1, DATE_FORMAT(D.RESERVATIONDATESTART, '%d %b %Y'), DATE_FORMAT(D.RESERVATIONDATEEND, '%d %b %Y')) AS JOBDATE,
                                 IF(A.JOBTYPE = 1, DATE_FORMAT(D.RESERVATIONTIMESTART, '%H:%i'), DATE_FORMAT(D.RESERVATIONTIMEEND, '%H:%i')) AS JOBTIME,
-                                D.CUSTOMERNAME, E.STATUSPROCESSNAME, D.CUSTOMERCONTACT, IFNULL(G.BRAND, '-') AS BRAND, IFNULL(G.MODEL, '-') AS MODEL,
-                                IF(G.TRANSMISSION = 1, 'Manual', 'Matic') AS TRANSMISSION, IFNULL(G.PLATNUMBER, '-') AS PLATNUMBER, D.REMARK, A.LOCATIONDROPOFF,
-                                A.LOCATIONPICKUP, A.NOTES
+                                D.CUSTOMERNAME, A.IDSTATUSPROCESSCARDROPOFFPICKUP, E.STATUSPROCESSNAME, D.CUSTOMERCONTACT, IFNULL(G.BRAND, '-') AS BRAND,
+                                IFNULL(G.MODEL, '-') AS MODEL, IF(G.TRANSMISSION = 1, 'Manual', 'Matic') AS TRANSMISSION, IFNULL(G.PLATNUMBER, '-') AS PLATNUMBER,
+                                D.REMARK, A.LOCATIONDROPOFF, A.LOCATIONPICKUP, A.NOTES
                         FROM t_schedulecardropoffpickup A
                         LEFT JOIN t_schedulecar B ON A.IDSCHEDULECAR = B.IDSCHEDULECAR
                         LEFT JOIN t_reservationdetails C ON B.IDRESERVATIONDETAILS = C.IDRESERVATIONDETAILS
