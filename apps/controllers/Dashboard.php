@@ -59,7 +59,7 @@ class Dashboard extends CI_controller {
 		$dataCollectPayment			=	$this->ModelDashboard->getDataCollectPayment($this->idPartnerType, $this->idPartner);
 		$dataLoan					=	$dataPrepaidCapital	=	false;
 		$arrAdditionalResp			=	array();
-		$reviewBonusPunishmentStatus=	$isGroupDriver	=	false;
+		$reviewBonusPunishmentStatus=	$isGroupDriver	=	$isCarRentalDriver	=	false;
 		
 		if($this->idPartnerType == 2){
 			$dataAllowedLoan			=	$this->MainOperation->getDataAllowedLoan($this->idPartner);
@@ -68,6 +68,7 @@ class Dashboard extends CI_controller {
 			$dataPrepaidCapital			=	$this->ModelDashboard->getDataDriverLoanPrepaidCapital($this->idPartner, 2);
 			$reviewBonusPunishmentStatus=	$this->ModelDashboard->isDriverAllowReviewBonusPunishment($this->idPartner);
 			$isGroupDriver				=	$this->detailPartner['ISGROUPDRIVER'] == 1 ? true : $isGroupDriver;
+			$isCarRentalDriver			=	$this->detailPartner['ISCARRENTALDRIVER'] == 1 ? true : $isCarRentalDriver;
 			
 			if(in_array(1, $arrIdLoanType) || in_array(2, $arrIdLoanType))	$arrAdditionalResp['dataLoan']	=	$dataLoan;
 			if(in_array(3, $arrIdLoanType))	$arrAdditionalResp['dataPrepaidCapital']	=	$dataPrepaidCapital;
@@ -95,6 +96,7 @@ class Dashboard extends CI_controller {
 					"financeSchemeType"				=>	$this->financeSchemeType,
 					"transportService"				=>	$this->transportService,
 					"isGroupDriver"					=>	$isGroupDriver,
+					"isCarRentalDriver"				=>	$isCarRentalDriver,
 					"reviewBonusPunishmentStatus"	=>	$reviewBonusPunishmentStatus,
 					"dataNewAgreement"				=>	$dataNewAgreement
 				),

@@ -50,6 +50,11 @@ $route['order/updateStatusOrder']['POST']							= 'Order/updateStatusOrder';
 $route['order/templateReviewOrder']['POST']							= 'Order/templateReviewOrder';
 $route['order/updateCoinBookingEcommerceTest']['GET']				= 'Order/updateCoinBookingEcommerceTest';
 
+$route['dropOffPickUpCar/listOrderByDate']['POST']					= 'DropOffPickUpCar/listOrderByDate';
+$route['dropOffPickUpCar/detailOrder']['POST']						= 'DropOffPickUpCar/detailOrder';
+$route['dropOffPickUpCar/updateStatusOrder']['POST']				= 'DropOffPickUpCar/updateStatusOrder';
+$route['dropOffPickUpCar/addAdditionalCost']['POST']				= 'DropOffPickUpCar/addAdditionalCost';
+
 $route['additionalCost/listSchedule']['POST']						= 'AdditionalCost/listSchedule';
 $route['additionalCost/addAdditionalCost']['POST']					= 'AdditionalCost/addAdditionalCost';
 $route['additionalCost/uploadImageAdditionalCost']['POST']			= 'AdditionalCost/uploadImageAdditionalCost';
