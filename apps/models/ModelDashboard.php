@@ -52,9 +52,9 @@ class ModelDashboard extends CI_Model {
 						"SELECT COUNT(A.IDSCHEDULECARDROPOFFPICKUP) AS TOTALACTIVEORDER
 						FROM t_schedulecardropoffpickup A
 						LEFT JOIN m_statusprocesscardropoffpickup B ON A.IDSTATUSPROCESSCARDROPOFFPICKUP = B.IDSTATUSPROCESSCARDROPOFFPICKUP
-						WHERE A.IDDRIVER = ".$idPartner." AND A.STATUS = 1 AND (B.ISFINISHED = 0 OR A.STATUS IN (1,2))
+						WHERE A.IDDRIVER = ".$idPartner." AND B.ISFINISHED = 0
 						GROUP BY A.IDDRIVER
-						ORDER BY A.IDDRIVER DESC, B.RESERVATIONTIMESTART"
+						ORDER BY A.IDDRIVER DESC"
 					);
 		$row	=	$query->row_array();
 
