@@ -29,15 +29,16 @@ class ModelDropOffPickUpCar extends CI_Model {
 		return false;		
 	}
 	
-	public function getDetailOrder($idScheduleCarDropOffPickUp){	
+	public function getDetailDropOffPickUpOrder($idScheduleCarDropOffPickUp){	
 		$query  =	$this->db->query(
                         "SELECT CONCAT('".URL_SOURCE_LOGO."', F.LOGO) AS SOURCELOGOURL, F.SOURCENAME, 
                                 D.RESERVATIONTITLE, A.JOBTYPE, IF(A.JOBTYPE = 1, 'Drop Off', 'Pick Up') AS JOBTYPESTR, 
+                                IF(A.JOBTYPE = 1, D.RESERVATIONDATESTART, D.RESERVATIONDATEEND) AS JOBDATEDB,
                                 IF(A.JOBTYPE = 1, DATE_FORMAT(D.RESERVATIONDATESTART, '%d %b %Y'), DATE_FORMAT(D.RESERVATIONDATEEND, '%d %b %Y')) AS JOBDATE,
                                 IF(A.JOBTYPE = 1, DATE_FORMAT(D.RESERVATIONTIMESTART, '%H:%i'), DATE_FORMAT(D.RESERVATIONTIMEEND, '%H:%i')) AS JOBTIME,
                                 D.CUSTOMERNAME, A.IDSTATUSPROCESSCARDROPOFFPICKUP, E.STATUSPROCESSNAME, D.CUSTOMERCONTACT, IFNULL(G.BRAND, '-') AS BRAND,
                                 IFNULL(G.MODEL, '-') AS MODEL, IF(G.TRANSMISSION = 1, 'Manual', 'Matic') AS TRANSMISSION, IFNULL(G.PLATNUMBER, '-') AS PLATNUMBER,
-                                D.REMARK, A.LOCATIONDROPOFF, A.LOCATIONPICKUP, A.NOTES
+                                D.REMARK, A.LOCATIONDROPOFF, A.LOCATIONPICKUP, A.NOTES, C.IDRESERVATION
                         FROM t_schedulecardropoffpickup A
                         LEFT JOIN t_schedulecar B ON A.IDSCHEDULECAR = B.IDSCHEDULECAR
                         LEFT JOIN t_reservationdetails C ON B.IDRESERVATIONDETAILS = C.IDRESERVATIONDETAILS
@@ -52,5 +53,18 @@ class ModelDropOffPickUpCar extends CI_Model {
 
 		if (isset($row)) return $row;
 		return false;
+	}
+	
+	public function getMaxStatusProcessDropOffPickUpCar(){	
+		$query  =	$this->db->query(
+                        "SELECT IDSTATUSPROCESSCARDROPOFFPICKUP
+                        FROM m_statusprocesscardropoffpickup
+                        WHERE ISFINISHED = 1
+                        LIMIT 1"
+                    );
+		$row    =	$query->row_array();
+
+		if (isset($row)) return $row['IDSTATUSPROCESSCARDROPOFFPICKUP'];
+		return 0;
 	}
 }
