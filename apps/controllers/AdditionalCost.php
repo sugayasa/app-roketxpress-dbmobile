@@ -93,20 +93,19 @@ class AdditionalCost extends CI_controller {
 		if(!$procInsert['status']) switchMySQLErrorCode($procInsert['errCode'], $this->newToken);
 
 		if(PRODUCTION_URL){
-
 			$partnerName				=	$this->detailPartner['PARTNERNAME'];
 			$totalAdditionalCostRequest	=	$this->ModelAdditionalCost->getTotalAdditionalCostRequest();
 			$factory					=	(new Factory)
 											->withServiceAccount(FIREBASE_PRIVATE_KEY_PATH)
 											->withDatabaseUri(FIREBASE_RTDB_URI);
 			$database					=	$factory->createDatabase();
-			$reference					=	$database->getReference(FIREBASE_RTDB_MAINREF_NAME."unprocessedFinanceDriver/additionalCost")
-											->set([
-												'newAdditionalCostStatus'	=>	true,
-												'newAdditionalCostTotal'	=>	$totalAdditionalCostRequest,
-												'newAdditionalCostMessage'	=>	"New additional cost request from ".$partnerName." - ".number_format($nominal, 0, '.', ',')." IDR.<br/>Description : ".$description,
-												'timestampUpdate'			=>	gmdate("YmdHis")
-											]);
+			$database->getReference(FIREBASE_RTDB_MAINREF_NAME."unprocessedFinanceDriver/additionalCost")
+			->set([
+				'newAdditionalCostStatus'	=>	true,
+				'newAdditionalCostTotal'	=>	$totalAdditionalCostRequest,
+				'newAdditionalCostMessage'	=>	"New additional cost request from ".$partnerName." - ".number_format($nominal, 0, '.', ',')." IDR.<br/>Description : ".$description,
+				'timestampUpdate'			=>	gmdate("YmdHis")
+			]);
 		}
 		
 		setResponseOk(array("token"=>$this->newToken, "msg"=>"Additional cost have been saved and waiting for approval"));

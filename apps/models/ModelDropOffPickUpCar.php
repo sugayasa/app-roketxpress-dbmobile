@@ -38,7 +38,7 @@ class ModelDropOffPickUpCar extends CI_Model {
                                 IF(A.JOBTYPE = 1, DATE_FORMAT(D.RESERVATIONTIMESTART, '%H:%i'), DATE_FORMAT(D.RESERVATIONTIMEEND, '%H:%i')) AS JOBTIME,
                                 D.CUSTOMERNAME, A.IDSTATUSPROCESSCARDROPOFFPICKUP, E.STATUSPROCESSNAME, D.CUSTOMERCONTACT, IFNULL(G.BRAND, '-') AS BRAND,
                                 IFNULL(G.MODEL, '-') AS MODEL, IF(G.TRANSMISSION = 1, 'Manual', 'Matic') AS TRANSMISSION, IFNULL(G.PLATNUMBER, '-') AS PLATNUMBER,
-                                D.REMARK, A.LOCATIONDROPOFF, A.LOCATIONPICKUP, A.NOTES, C.IDRESERVATION
+                                D.REMARK, A.LOCATIONDROPOFF, A.LOCATIONPICKUP, A.NOTES, C.IDRESERVATION, B.IDRESERVATIONDETAILS
                         FROM t_schedulecardropoffpickup A
                         LEFT JOIN t_schedulecar B ON A.IDSCHEDULECAR = B.IDSCHEDULECAR
                         LEFT JOIN t_reservationdetails C ON B.IDRESERVATIONDETAILS = C.IDRESERVATIONDETAILS
@@ -66,5 +66,20 @@ class ModelDropOffPickUpCar extends CI_Model {
 
 		if (isset($row)) return $row['IDSTATUSPROCESSCARDROPOFFPICKUP'];
 		return 0;
+	}
+
+	public function getTotalCarRentCostRequest(){
+		$query	=	$this->db->query(
+                        "SELECT COUNT(IDRESERVATIONADDITIONALCOST) AS TOTALADDITIONALCOSTREQUEST
+                        FROM t_schedulecardropoffpickup A
+                        LEFT JOIN t_schedulecar B ON A.IDSCHEDULECAR = B.IDSCHEDULECAR
+                        LEFT JOIN t_reservationadditionalcost C ON B.IDRESERVATIONDETAILS = C.IDRESERVATIONDETAILS
+                        WHERE C.STATUSAPPROVAL = 0 AND C.IDRESERVATIONDETAILS IS NOT NULL
+                        LIMIT 1"
+                    );
+		$row	=	$query->row_array();
+
+		if(isset($row)) return $row['TOTALADDITIONALCOSTREQUEST'];
+		return 0;		
 	}
 }

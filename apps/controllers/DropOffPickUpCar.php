@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+use Kreait\Firebase\Factory;
 
 class DropOffPickUpCar extends CI_controller {
 	
@@ -118,5 +119,69 @@ class DropOffPickUpCar extends CI_controller {
 		}
 
 		setResponseInternalServerError(array("token"=>$this->newToken, "msg"=>"Internal server error. Please try again later"));
+	}
+	
+	public function addAdditionalCost(){
+		$this->load->model('MainOperation');
+		$this->load->model('ModelAdditionalCost');
+		$this->load->model('ModelDropOffPickUpCar');
+		
+		$idScheduleCarDropOffPickUp	=	validatePostVar($this->postVar, 'idScheduleCarDropOffPickUp', true);
+		$detailDropOffPickUpOrder	=	$this->ModelDropOffPickUpCar->getDetailDropOffPickUpOrder($idScheduleCarDropOffPickUp);
+
+		if(!$detailDropOffPickUpOrder) setResponseNotFound(array("token" => $this->newToken, "msg" => "Detail drop off/pick up order not found."));
+
+		$idAdditionalCostType	=	validatePostVar($this->postVar, 'idAdditionalCostType', true);
+		$description			=	validatePostVar($this->postVar, 'description', true);
+		$nominal				=	validatePostVar($this->postVar, 'nominal', true);
+		$nominal				=	preg_replace("/[^0-9,]/", "", $nominal);
+		$imageReceipt			=	validatePostVar($this->postVar, 'imageReceipt', true);
+		$jobType				=	$detailDropOffPickUpOrder['JOBTYPE'];
+		$jobDate				=	$detailDropOffPickUpOrder['JOBDATEDB'];
+		$idReservationDetails	=	$detailDropOffPickUpOrder['IDRESERVATIONDETAILS'];
+		$prefixDescription		=	$jobType == 1 ? "[Car Drop Off]" : "[Car Pick Up]";
+
+		$jobDateDT				=	new DateTime($jobDate);
+		$dateDifferenceDays		=	$jobDateDT->diff(new DateTime());
+		$daysDifference			=	$dateDifferenceDays->days;
+
+		if($daysDifference > MAX_DAY_ADDITIONAL_COST_INPUT) setResponseForbidden(array("token"=>$this->newToken, "msg"=>"You can only add additional cost up to ".MAX_DAY_ADDITIONAL_COST_INPUT." days after the job date."));
+
+		$arrInsertAddCost		=	array(
+			"IDRESERVATIONDETAILS"	=>	$idReservationDetails,
+			"IDDRIVER"				=>	$this->idPartner,
+			"IDADDITIONALCOSTTYPE"	=>	$idAdditionalCostType,
+			"DESCRIPTION"			=>	$prefixDescription." ".$description,
+			"NOMINAL"				=>	$nominal,
+			"IMAGERECEIPT"			=>	$imageReceipt,
+			"DATETIMEINPUT"			=>	date("Y-m-d H:i:s")
+		);
+		$procInsert				=	$this->MainOperation->addData("t_reservationadditionalcost", $arrInsertAddCost);
+		
+		if(!$procInsert['status']) switchMySQLErrorCode($procInsert['errCode'], $this->newToken);
+
+		if(PRODUCTION_URL){
+			$partnerName			=	$this->detailPartner['PARTNERNAME'];
+			$newAdditionalCostTotal	=	$this->ModelAdditionalCost->getTotalAdditionalCostRequest();
+			$newCarCostTotal		=	$this->ModelDropOffPickUpCar->getTotalCarRentCostRequest();
+			$factory				=	(new Factory)
+											->withServiceAccount(FIREBASE_PRIVATE_KEY_PATH)
+											->withDatabaseUri(FIREBASE_RTDB_URI);
+			$database				=	$factory->createDatabase();
+			$database->getReference(FIREBASE_RTDB_MAINREF_NAME."unprocessedFinanceDriver/additionalCost")
+			->set([
+				'newAdditionalCostTotal'	=>	$newAdditionalCostTotal
+			]);
+
+			$database->getReference(FIREBASE_RTDB_MAINREF_NAME."unprocessedFinanceVendor/carRentCost")
+			->set([
+				'newAdditionalCostStatus'	=>	true,
+				'newAdditionalCostTotal'	=>	$newAdditionalCostTotal,
+				'newAdditionalCostMessage'	=>	"New additional cost request ".$prefixDescription." from ".$partnerName." - ".number_format($nominal, 0, '.', ',')." IDR.<br/>Description : ".$description,
+				'timestampUpdate'			=>	gmdate("YmdHis")
+			]);
+		}
+		
+		setResponseOk(array("token"=>$this->newToken, "msg"=>"Additional cost have been saved and waiting for approval"));
 	}
 }
