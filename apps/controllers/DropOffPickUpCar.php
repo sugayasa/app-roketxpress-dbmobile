@@ -76,10 +76,13 @@ class DropOffPickUpCar extends CI_controller {
 			setResponseNotFound(array("token"=>$this->newToken, "msg"=>"Detail order not found or this order has been canceled."));
 		} else {						
 			$detailOrder['CUSTOMERCONTACT']	=	preg_replace("/[^0-9+]/", "", $detailOrder['CUSTOMERCONTACT']);
+			$idReservationDetails			=	$detailOrder['IDRESERVATIONDETAILS'];
+			$listAdditionalCost				=	$this->ModelDropOffPickUpCar->getListAdditionalCost($this->idPartner, $idReservationDetails);
 			setResponseOk(
 				array(
-					"token"         =>	$this->newToken,
-					"detailOrder"   =>	$detailOrder
+					"token"         	=>	$this->newToken,
+					"detailOrder"   	=>	$detailOrder,
+					"listAdditionalCost"=>	$listAdditionalCost,
 				)
 			);
 		}		

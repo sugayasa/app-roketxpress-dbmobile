@@ -82,4 +82,25 @@ class ModelDropOffPickUpCar extends CI_Model {
 		if(isset($row)) return $row['TOTALADDITIONALCOSTREQUEST'];
 		return 0;		
 	}
+
+	public function getListAdditionalCost($idDriver, $idReservationDetails){
+		$query	=	$this->db->query(
+                        "SELECT B.ADDITIONALCOSTTYPE, A.DESCRIPTION, A.NOMINAL,
+								DATE_FORMAT(A.DATETIMEINPUT, '%d %b %Y %H:%i') AS DATETIMEINPUT,
+								CASE
+									WHEN A.STATUSAPPROVAL = 0 THEN 'Waiting for approval'
+									WHEN A.STATUSAPPROVAL = 1 THEN 'Approved'
+									WHEN A.STATUSAPPROVAL = -1 THEN 'Rejected'
+									ELSE '-'
+								END AS STRSTATUSAPPROVAL
+						 FROM t_reservationadditionalcost A
+						 LEFT JOIN m_additionalcosttype B ON A.IDADDITIONALCOSTTYPE = B.IDADDITIONALCOSTTYPE
+						 WHERE A.IDDRIVER = '".$idDriver."' AND A.IDRESERVATIONDETAILS = '".$idReservationDetails."'
+						 ORDER BY A.DATETIMEINPUT ASC"
+                    );
+		$result	=	$query->result();
+
+		if (isset($result)) return $result;
+		return [];
+	}
 }
